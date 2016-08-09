@@ -1,0 +1,6 @@
+{
+    "projects": [
+        "Sql.Migrations",
+        "Sql.Migrations.Tests"
+    ]
+}
