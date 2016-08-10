@@ -13,7 +13,7 @@ namespace Sql.Migrations.Tests
         private static readonly bool IsAppVeyor = Environment.GetEnvironmentVariable("Appveyor")?.ToUpperInvariant() == "TRUE";
 
         public static string ConnectionString =>  IsAppVeyor
-            ? @"Server=(local)\SQL2014;Database=tempdb;User ID=sa;Password=Password12!"
+            ? @"Server=(local)\SQL2016;Database=tempdb;User ID=sa;Password=Password12!"
             : "Data Source=(localdb)\\ProjectsV13;Initial Catalog=tempdb;Integrated Security=True";
         
         public static IDbConnection GetConnection()
