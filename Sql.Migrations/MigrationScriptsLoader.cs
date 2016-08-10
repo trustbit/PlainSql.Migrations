@@ -9,6 +9,9 @@ namespace Sql.Migrations
     {
         public static IEnumerable<MigrationScript> FromDirectory(string migrationsDirectory, string searchPattern = null)
         {
+            if (!Directory.Exists(migrationsDirectory))
+                return Enumerable.Empty<MigrationScript>();
+
             var migrationScriptNames = Directory.GetFiles(migrationsDirectory, searchPattern ?? "*.sql");
 
             return migrationScriptNames

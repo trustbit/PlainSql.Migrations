@@ -38,5 +38,12 @@ namespace Sql.Migrations.Tests
                 }
             );
         }
+
+        // TODO: is this behavior ok?
+        [Fact]
+        public void Searching_on_non_existing_directory_should_lead_to_no_result()
+        {
+            Assert.Empty(MigrationScriptsLoader.FromDirectory(Path.Combine(ResourceDirectory, "bar"), "*.foo"));
+        }
     }
 }
