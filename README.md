@@ -14,7 +14,7 @@ dotnet  add package Sql.Migrations
 
 ## Usage
 
-`Sql.Migration` provides a script loader and a migrator that interact to load and execute migration scripts.
+`PlainSql.Migrations` provide a script loader and a migrator that interact to load and execute migration scripts.
 
 ```csharp
 using PlainSql.Migrations;
