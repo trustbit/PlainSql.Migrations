@@ -1,6 +1,7 @@
 # Sql.Migrations
 
-[![Build status](https://ci.appveyor.com/api/projects/status/s0h50wkhhy46xvwb?svg=true)](https://ci.appveyor.com/project/Nagelfar/sql-migrations)
+[![Build status](https://ci.appveyor.com/api/projects/status/m4313sgopt1arwij?svg=true)](https://ci.appveyor.com/project/saintedlama/plainsql-migrations)
+[![Coverage Status](https://coveralls.io/repos/github/Softwarepark/PlainSql.Migrations/badge.svg?branch=master)](https://coveralls.io/github/Softwarepark/PlainSql.Migrations?branch=master)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 Execute migration scripts written in plain old SQL. Only executes each migration once.
