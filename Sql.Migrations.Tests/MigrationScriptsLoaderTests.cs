@@ -1,5 +1,6 @@
 using Xunit;
 using System.IO;
+using System;
 
 namespace Sql.Migrations.Tests
 {
@@ -10,6 +11,7 @@ namespace Sql.Migrations.Tests
         {
             const string resource = "resources";
             var dir = Path.Combine(Directory.GetCurrentDirectory(), resource);
+
             if (!Directory.Exists(dir))
                 dir = Path.Combine(Directory.GetCurrentDirectory(), "Sql.Migrations.Tests", resource);
 
@@ -39,11 +41,11 @@ namespace Sql.Migrations.Tests
             );
         }
 
-        // TODO: is this behavior ok?
         [Fact]
         public void Searching_on_non_existing_directory_should_lead_to_no_result()
         {
-            Assert.Empty(MigrationScriptsLoader.FromDirectory(Path.Combine(ResourceDirectory, "bar"), "*.foo"));
+            var nonExistingDirectory = Path.Combine(ResourceDirectory, "bar");
+            Assert.Throws<InvalidOperationException>(() => MigrationScriptsLoader.FromDirectory(nonExistingDirectory, "*.sql"));
         }
     }
 }

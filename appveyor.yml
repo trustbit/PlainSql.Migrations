@@ -1,27 +1,14 @@
-version: 1.0.{build}
-clone_depth: 1
-environment:
-  Appveyor: true
+image: Visual Studio 2017
 services: mssql2016
-nuget:
-  account_feed: true
-  project_feed: true
+branches:
+  only:
+  - master
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet tool install coveralls.net --global
 build_script:
-- cmd: >-
-    dotnet restore
-
-    dotnet pack Sql.Migrations --version-suffix=b%APPVEYOR_BUILD_NUMBER%
-
-    appveyor PushArtifact Sql.Migrations/bin/Debug/Sql.Migrations.1.0.0-b%APPVEYOR_BUILD_NUMBER%.nupkg
-
-    appveyor PushArtifact Sql.Migrations/bin/Debug/Sql.Migrations.1.0.0-b%APPVEYOR_BUILD_NUMBER%.symbols.nupkg
+  - cmd: dotnet build
 test_script:
-- cmd: dotnet test Sql.Migrations.Tests
-notifications:
-- provider: HipChat
-  room: Weichenwerk
-  auth_token:
-    secure: lk9q8AL0m0O8h9WUBhMfcGdVaznvV/YOEbsXF9DgJtGkKALSHDg4ivsm3sCj5azU
-  on_build_success: true
-  on_build_failure: false
-  on_build_status_changed: true
+  - cmd: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover Sql.Migrations.Tests/Sql.Migrations.Tests.csproj
+  - ps: csmacnz.Coveralls --opencover -i C:\projects\Sql.Migrations\Sql.Migrations.Tests\coverage.opencover.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
+deploy: off
