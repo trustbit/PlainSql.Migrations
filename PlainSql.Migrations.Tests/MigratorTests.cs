@@ -56,10 +56,7 @@ GO";
             // TODO: Discuss: should we remove empty lines?
             Assert.Collection(Migrator.SplitIntoStatements(twoGos),
                 x => Assert.StartsWith("/****", x),
-                x => Assert.StartsWith(@"
-
-
-ALTER", x)
+                x => Assert.StartsWith("ALTER", RemoveEmptyLines(x))
                 );
         }
 
@@ -120,6 +117,10 @@ ALTER", x)
                 // Migrations table + bla
                 Assert.Equal(2,c.Query<string>("SELECT Filename FROM [dbo].[Migrations]").ToList().Count);
             });
+        }
+
+        private string RemoveEmptyLines(string x) {
+            return String.Join("\r\n", x.Split("\r\n").Split("\r").Split("\n").Select(s=> !String.IsNullOrWhiteSpace(s)));
         }
     }
 }
