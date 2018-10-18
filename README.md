@@ -16,6 +16,8 @@ dotnet  add package Sql.Migrations
 `Sql.Migration` provides a script loader and a migrator that interact to load and execute migration scripts.
 
 ```csharp
+using PlainSql.Migrations;
+
 private void ExecuteMigrations(string connectionString, string environment)
 {
     using (var connection = new SqlConnection(connectionString))

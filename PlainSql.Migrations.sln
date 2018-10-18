@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql.Migrations", "Sql.Migrations\Sql.Migrations.csproj", "{C47E594A-830A-49AC-9AE4-EA883F3DD40B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainSql.Migrations", "PlainSql.Migrations\PlainSql.Migrations.csproj", "{C47E594A-830A-49AC-9AE4-EA883F3DD40B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql.Migrations.Tests", "Sql.Migrations.Tests\Sql.Migrations.Tests.csproj", "{5371A94E-7C80-4F0F-A46B-A3D9BD9567CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainSql.Migrations.Tests", "PlainSql.Migrations.Tests\PlainSql.Migrations.Tests.csproj", "{5371A94E-7C80-4F0F-A46B-A3D9BD9567CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

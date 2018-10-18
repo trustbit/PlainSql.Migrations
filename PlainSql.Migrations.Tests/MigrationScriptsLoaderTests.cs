@@ -2,7 +2,7 @@ using Xunit;
 using System.IO;
 using System;
 
-namespace Sql.Migrations.Tests
+namespace PlainSql.Migrations.Tests
 {
     public class MigrationScriptsLoaderTests
     {

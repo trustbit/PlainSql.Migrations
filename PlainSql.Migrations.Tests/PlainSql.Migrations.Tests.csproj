@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sql.Migrations\Sql.Migrations.csproj" />
+    <ProjectReference Include="..\PlainSql.Migrations\PlainSql.Migrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
