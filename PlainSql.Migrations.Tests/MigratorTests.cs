@@ -120,7 +120,9 @@ GO";
         }
 
         private string RemoveEmptyLines(string x) {
-            return String.Join("\r\n", x.Split("\r\n").Split("\r").Split("\n").Select(s=> !String.IsNullOrWhiteSpace(s)));
+            return String.Join("\r\n", 
+                x.Split(new [] { "\r\n", "\r", "\n"}, StringSplitOptions.None)
+                .Where(s=> !String.IsNullOrWhiteSpace(s)));
         }
     }
 }
