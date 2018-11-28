@@ -8,7 +8,7 @@
     <PackageTags>sql;migrations;conventional;commit;git</PackageTags>
     <Description>Execute migration scripts written in plain old SQL</Description>
     <PackageProjectUrl>https://github.com/Softwarepark/PlainSql.Migrations</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/Softwarepark/PlainSql.Migrations/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Softwarepark/PlainSql.Migrations</RepositoryUrl>
   </PropertyGroup>
