@@ -33,3 +33,8 @@ private void ExecuteMigrations(string connectionString, string environment)
     }
 }
 ```
+
+## Database Support
+
+* SQLite
+* MS SQL
