@@ -15,10 +15,21 @@ namespace PlainSql.Migrations
         // TODO: Add a script hash to migrations to avoid scripts to be changed without running the migration
         public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, bool createMigrationsTable = true)
         {
+
             using (var transaction = connection.BeginTransaction())
             {
-                 var containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations'",
+                var containsMigrationTable = false;
+
+                if (connection.IsSqlLite())
+                {
+                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
                         transaction: transaction) == 1;
+                }
+                else
+                {
+                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations'",
+                       transaction: transaction) == 1;
+                }
 
                 if (createMigrationsTable && !containsMigrationTable)
                 {
@@ -26,7 +37,7 @@ namespace PlainSql.Migrations
                     CreateMigrationsTable(connection, transaction);
                 }
 
-                var migrationsExecuted = connection.Query<string>("SELECT Filename FROM dbo.Migrations", transaction: transaction).ToList();
+                var migrationsExecuted = connection.Query<string>("SELECT Filename FROM Migrations", transaction: transaction).ToList();
 
                 var migrationScriptsToExecute = migrationScripts
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))
@@ -52,7 +63,7 @@ namespace PlainSql.Migrations
 
             statements.ForEach(s => connection.Execute(s, transaction: transaction));
 
-            connection.Execute("INSERT INTO [dbo].[Migrations] (Id, Filename, AppliedOn) VALUES (@id, @filename, @appliedOn)", new
+            connection.Execute("INSERT INTO Migrations (Id, Filename, AppliedOn) VALUES (@id, @filename, @appliedOn)", new
             {
                 Id = Guid.NewGuid(),
                 AppliedOn = DateTimeOffset.Now,
@@ -60,7 +71,7 @@ namespace PlainSql.Migrations
             }, transaction);
         }
 
-        private const string CreateTableScript = @"CREATE TABLE [dbo].[Migrations](
+        private const string CreateTableScript = @"CREATE TABLE Migrations (
   [Id] [nchar](36) NOT NULL,
   [Filename] [nvarchar](255) NOT NULL,
   [AppliedOn] [datetimeoffset](7) NOT NULL,
@@ -99,6 +110,11 @@ namespace PlainSql.Migrations
             if (sb.Length > 0)
                 yield return sb.ToString();
 
+        }
+
+        private static bool IsSqlLite(this IDbConnection connection)
+        {
+            return connection.GetType().AssemblyQualifiedName.IndexOf("SQLite", StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
     }
 }

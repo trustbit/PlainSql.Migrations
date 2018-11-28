@@ -2,18 +2,21 @@
 using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace PlainSql.Migrations.Tests
 {
-    public class MigratorTests
+    public abstract class AbstractMigratorTests
     {
+        protected abstract IDbConnection Connection { get; }
+
         [Fact]
         public void String_with_no_GO_is_only_one_script()
         {
-            var test = @"CREATE TABLE [dbo].[Migrations](
+            var test = @"CREATE TABLE [Migrations](
         [Id] [uniqueidentifier] NOT NULL,
         [Filename] [nvarchar](255) NOT NULL,
         [AppliedOn] [datetimeoffset](7) NOT NULL,
@@ -40,7 +43,7 @@ or with a Visual Studio database project
 
 */
 
-CREATE TABLE [dbo].[Foo](
+CREATE TABLE [Foo](
         [Id] [uniqueidentifier] NOT NULL,
 
 PRIMARY KEY CLUSTERED
@@ -50,7 +53,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[Bar] CHECK CONSTRAINT [FooBar]
+ALTER TABLE [Bar] CHECK CONSTRAINT [FooBar]
 GO";
 
             // TODO: Discuss: should we remove empty lines?
@@ -63,7 +66,7 @@ GO";
         [Fact]
         public void On_empty_db_can_execute_no_Scripts()
         {
-            TestSuite.WithCleanDbConnection((c) =>
+            Connection.WithCleanDbConnection((c) =>
             {
                 Migrator.ExecuteMigrations(c, Enumerable.Empty<MigrationScript>());
             });
@@ -72,7 +75,7 @@ GO";
         [Fact]
         public void On_empty_db_can_create_a_Migrations_table()
         {
-            TestSuite.WithCleanDbConnection((c) =>
+            Connection.WithCleanDbConnection((c) =>
             {
                 using (var tx = c.BeginTransaction())
                 {
@@ -80,49 +83,50 @@ GO";
                     tx.Commit();
                 }
 
-                Assert.NotEmpty(c.Query<string>("SELECT Filename FROM [dbo].[Migrations]"));
+                Assert.NotEmpty(c.Query<string>("SELECT Filename FROM [Migrations]"));
             });
         }
 
         [Fact]
         public void Can_execute_one_create_Table_Script_in_empty_Db()
         {
-            TestSuite.WithCleanDbConnection((c) =>
+            Connection.WithCleanDbConnection((c) =>
             {
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [dbo].[bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
-                Assert.Empty(c.Query<object>("SELECT * FROM [dbo].[bla]"));
+                Assert.Empty(c.Query<object>("SELECT * FROM [bla]"));
             });
         }
 
         [Fact]
         public void Does_not_execute_the_same_script_twice()
         {
-            TestSuite.WithCleanDbConnection((c) =>
+            Connection.WithCleanDbConnection((c) =>
             {
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [dbo].[bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
                 // Migrations table + bla
-                Assert.Equal(2,c.Query<string>("SELECT Filename FROM [dbo].[Migrations]").ToList().Count);
+                Assert.Equal(2, c.Query<string>("SELECT Filename FROM [Migrations]").ToList().Count);
             });
         }
 
-        private string RemoveEmptyLines(string x) {
-            return String.Join("\r\n", 
-                x.Split(new [] { "\r\n", "\r", "\n"}, StringSplitOptions.None)
-                .Where(s=> !String.IsNullOrWhiteSpace(s)));
+        private string RemoveEmptyLines(string x)
+        {
+            return String.Join("\r\n",
+                x.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                .Where(s => !String.IsNullOrWhiteSpace(s)));
         }
     }
 }
