@@ -8,12 +8,9 @@ All notable changes to this project will be documented in this file. See [versio
 ### Features
 
 * add support for sqlite
-* update project to dotnet standard 2.0, prepare nuget data, add coverage, fix bugs in migrator and add more documentation
 
 ## 1.0.0 (2018-11-28)
 
 ### Features
 
-* add support for sqlite
 * update project to dotnet standard 2.0, prepare nuget data, add coverage, fix bugs in migrator and add more documentation
-
