@@ -15,12 +15,27 @@ namespace PlainSql.Migrations
         // TODO: Add a script hash to migrations to avoid scripts to be changed without running the migration
         public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, bool createMigrationsTable = true)
         {
+            ExecuteMigrations(connection, migrationScripts, options => { });
+        }
 
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, Action<MigrationOptionsBuilder> configure)
+        {
+            var builder = new MigrationOptionsBuilder().CreateMigrationsTable(true);
+
+            configure(builder);
+
+            var options = builder.Build();
+
+            ExecuteMigrations(connection, migrationScripts, options);
+        }
+
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
+        {
             using (var transaction = connection.BeginTransaction())
             {
                 var containsMigrationTable = false;
 
-                if (connection.IsSqlLite())
+                if (connection.IsSqlite())
                 {
                     containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
                         transaction: transaction) == 1;
@@ -31,7 +46,7 @@ namespace PlainSql.Migrations
                        transaction: transaction) == 1;
                 }
 
-                if (createMigrationsTable && !containsMigrationTable)
+                if (options.CreateMigrationsTable && !containsMigrationTable)
                 {
                     Log.Information("Creating initial migration table...");
                     CreateMigrationsTable(connection, transaction);
@@ -43,16 +58,33 @@ namespace PlainSql.Migrations
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
-
                 Log.Information("Executing {MigrationScriptsCount} migration scripts...", migrationScriptsToExecute.Count());
 
-                foreach (var migrationScript in migrationScriptsToExecute)
+                foreach (var migrationScript in migrationScriptsToExecute.Select(ProcessMigrationScript(connection, options.ScriptProcessors)))
                 {
                     ExecuteMigration(connection, transaction, migrationScript);
                 }
 
                 transaction.Commit();
             }
+        }
+
+        private static Func<MigrationScript, MigrationScript> ProcessMigrationScript(IDbConnection connection, IEnumerable<IMigrationScriptProcessor> processors)
+        {
+            return (migrationScript) =>
+            {
+                var processedScript = migrationScript;
+
+                foreach (var processor in processors)
+                {
+                    if (processor.CanProcess(connection, processedScript))
+                    {
+                        processedScript = processor.Process(connection, processedScript);
+                    }
+                }
+
+                return processedScript;
+            };
         }
 
         public static void ExecuteMigration(IDbConnection connection, IDbTransaction transaction, MigrationScript migrationScript)
@@ -110,11 +142,6 @@ namespace PlainSql.Migrations
             if (sb.Length > 0)
                 yield return sb.ToString();
 
-        }
-
-        private static bool IsSqlLite(this IDbConnection connection)
-        {
-            return connection.GetType().AssemblyQualifiedName.IndexOf("SQLite", StringComparison.InvariantCultureIgnoreCase) >= 0;
         }
     }
 }

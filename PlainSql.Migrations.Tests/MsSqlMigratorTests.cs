@@ -41,7 +41,7 @@ namespace PlainSql.Migrations.Tests
                 return @"Server=(local)\SQL2016;Database=tempdb;User ID=sa;Password=Password12!";
             }
 
-            return "Data Source=(localdb)\\ProjectsV13;Initial Catalog=tempdb;Integrated Security=True";
+            return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
         }
     }
 }
