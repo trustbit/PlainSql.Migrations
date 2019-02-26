@@ -1,16 +1,13 @@
 using System;
 using System.Data;
-using System.Text.RegularExpressions;
 
 namespace PlainSql.Migrations.Sqlite
 {
-    public class FixSqliteMaxProcessor : IMigrationScriptProcessor
+    public class FixSqliteMax : IMigrationScriptProcessor
     {
-        private static readonly Regex FixMax = new Regex("\\(MAX\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         private readonly int _valueOfMax;
 
-        public FixSqliteMaxProcessor(int valueOfMax)
+        public FixSqliteMax(int valueOfMax)
         {
             _valueOfMax = valueOfMax;
         }
@@ -25,7 +22,7 @@ namespace PlainSql.Migrations.Sqlite
             return new MigrationScript
             {
                 Name = script.Name,
-                Script = FixMax.Replace(script.Script, $"({_valueOfMax.ToString()})"),
+                Script = script.Script.Replace("(MAX)", $"({_valueOfMax.ToString()})"),
             };
         }
     }

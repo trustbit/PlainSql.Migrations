@@ -9,7 +9,7 @@ namespace PlainSql.Migrations.Tests.Sqlite
         [Fact]
         public void ShouldReplaceMax()
         {
-            var processor = new FixSqliteMaxProcessor(8000);
+            var processor = new FixSqliteMax(8000);
             var migrationScript = new MigrationScript {
                 Name = "test.sql",
                 Script = @"CREATE TABLE TestTable
@@ -38,7 +38,7 @@ namespace PlainSql.Migrations.Tests.Sqlite
         [Fact]
         public void ShouldNotReplaceMaxWithoutBraces()
         {
-            var processor = new FixSqliteMaxProcessor(8000);
+            var processor = new FixSqliteMax(8000);
             var migrationScript = new MigrationScript {
                 Name = "test.sql",
                 Script = @"CREATE TABLE TestTable

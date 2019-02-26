@@ -42,7 +42,7 @@ namespace PlainSql.Migrations.Tests
             {
                 Migrator.ExecuteMigrations(connection, migrationScripts, (configuration) =>
                 {
-                    configuration.Use(new FixSqliteMaxProcessor(8000));
+                    configuration.Use(new FixSqliteMax(8000));
                 });
 
                 Assert.Empty(connection.Query<object>("SELECT * FROM TestTable"));
