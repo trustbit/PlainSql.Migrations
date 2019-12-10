@@ -1,12 +1,6 @@
-using Dapper;
-using Dapper.Contrib.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace PlainSql.Migrations.Tests
 {
@@ -27,11 +21,11 @@ namespace PlainSql.Migrations.Tests
 
         protected string GetConnectionString()
         {
-            var connectinStringFromEnvironment = Environment.GetEnvironmentVariable("PLAIN_SQL_MIGRATIONS_MS_SQL");
+            var connectionStringFromEnvironment = Environment.GetEnvironmentVariable("PLAIN_SQL_MIGRATIONS_MS_SQL");
 
-            if (!String.IsNullOrWhiteSpace(connectinStringFromEnvironment))
+            if (!String.IsNullOrWhiteSpace(connectionStringFromEnvironment))
             {
-                return connectinStringFromEnvironment;
+                return connectionStringFromEnvironment;
             }
 
             var IsAppVeyor = Environment.GetEnvironmentVariable("Appveyor")?.ToUpperInvariant() == "TRUE";

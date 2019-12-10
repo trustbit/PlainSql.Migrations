@@ -83,7 +83,9 @@ GO";
                     tx.Commit();
                 }
 
-                Assert.NotEmpty(c.Query<string>("SELECT Filename FROM [Migrations]"));
+                var select = c.IsPostgre() ? "SELECT Filename FROM Migrations" : "SELECT Filename FROM [Migrations]"; 
+
+                Assert.NotEmpty(c.Query<string>(select));
             });
         }
 
@@ -92,14 +94,18 @@ GO";
         {
             Connection.WithCleanDbConnection((c) =>
             {
+                var defaultScript = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)";
+                var postgreScript = "CREATE TABLE bla (Id varchar(1) NOT NULL)";
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = c.IsPostgre() ? postgreScript : defaultScript
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
-                Assert.Empty(c.Query<object>("SELECT * FROM [bla]"));
+                var select = c.IsPostgre() ? "SELECT * FROM bla" : "SELECT * FROM [bla]"; 
+
+                Assert.Empty(c.Query<object>(select));
             });
         }
 
@@ -108,17 +114,20 @@ GO";
         {
             Connection.WithCleanDbConnection((c) =>
             {
+                var defaultScript = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)";
+                var postgreScript = "CREATE TABLE bla (Id varchar(1) NOT NULL)";
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = c.IsPostgre() ? postgreScript : defaultScript
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
-
+                
+                var select = c.IsPostgre() ? "SELECT Filename FROM Migrations" : "SELECT Filename FROM [Migrations]"; 
                 // Migrations table + bla
-                Assert.Equal(2, c.Query<string>("SELECT Filename FROM [Migrations]").ToList().Count);
+                Assert.Equal(2, c.Query<string>(select).ToList().Count);
             });
         }
 
