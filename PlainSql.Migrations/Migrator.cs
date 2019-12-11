@@ -114,14 +114,14 @@ namespace PlainSql.Migrations
   [AppliedOn] [datetimeoffset](7) NOT NULL,
   CONSTRAINT PK_Migrations PRIMARY KEY (Id)
 )";
-        
+
         private const string CreateTableScriptPostgre = @"CREATE TABLE Migrations (
   Id char(36) NOT NULL,
   Filename varchar(255) NOT NULL,
   AppliedOn timestamp NOT NULL,
   CONSTRAINT PK_Migrations PRIMARY KEY (Id)
 )";
-        
+
         public static void CreateMigrationsTable(IDbConnection connection, IDbTransaction transaction)
         {
             var migrationTableMigration = new MigrationScript

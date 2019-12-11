@@ -17,8 +17,8 @@ namespace PlainSql.Migrations.Tests
             {
                 using (var tx = c.BeginTransaction())
                 {
-                    c.Execute(c.IsPostgre() ? "DROP TABLE IF EXISTS bla" : "DROP TABLE IF EXISTS [bla]", transaction: tx);
-                    c.Execute(c.IsPostgre() ? "DROP TABLE IF EXISTS Migrations" : "DROP TABLE IF EXISTS [Migrations]", transaction: tx);
+                    c.Execute("DROP TABLE IF EXISTS bla", transaction: tx);
+                    c.Execute("DROP TABLE IF EXISTS Migrations", transaction: tx);
 
                     tx.Commit();
                 }
