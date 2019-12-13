@@ -1,5 +1,7 @@
 image: Visual Studio 2017
-services: mssql2016
+services:
+  - mssql2016
+  - postgresql
 branches:
   only:
   - master

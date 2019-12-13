@@ -1,5 +1,4 @@
 using Dapper;
-using Dapper.Contrib.Extensions;
 using PlainSql.Migrations.Sqlite;
 using System.Collections.Generic;
 using System.Data;

@@ -40,6 +40,11 @@ namespace PlainSql.Migrations
                     containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
                         transaction: transaction) == 1;
                 }
+                else if (connection.IsPostgre())
+                {
+                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename='migrations'",
+                                                 transaction: transaction) == 1;
+                }
                 else
                 {
                     containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations'",
@@ -109,12 +114,20 @@ namespace PlainSql.Migrations
   [AppliedOn] [datetimeoffset](7) NOT NULL,
   CONSTRAINT PK_Migrations PRIMARY KEY (Id)
 )";
+
+        private const string CreateTableScriptPostgre = @"CREATE TABLE Migrations (
+  Id char(36) NOT NULL,
+  Filename varchar(255) NOT NULL,
+  AppliedOn timestamp NOT NULL,
+  CONSTRAINT PK_Migrations PRIMARY KEY (Id)
+)";
+
         public static void CreateMigrationsTable(IDbConnection connection, IDbTransaction transaction)
         {
             var migrationTableMigration = new MigrationScript
             {
                 Name = "Migration-Table",
-                Script = CreateTableScript
+                Script = connection.IsPostgre() ? CreateTableScriptPostgre : CreateTableScript
             };
 
             ExecuteMigration(connection, transaction, migrationTableMigration);

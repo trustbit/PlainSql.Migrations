@@ -1,10 +1,10 @@
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Npgsql;
 
 namespace PlainSql.Migrations.Tests
 {
-    public class MsSqlMigratorTests : AbstractMigratorTests
+    public class PostgreMigratorTest : AbstractMigratorTests
     {
         protected override IDbConnection Connection
         {
@@ -12,7 +12,7 @@ namespace PlainSql.Migrations.Tests
             {
                 var connectionString = GetConnectionString();
 
-                var c = new SqlConnection(connectionString);
+                var c = new NpgsqlConnection(connectionString);
                 c.Open();
 
                 return c;
@@ -21,7 +21,7 @@ namespace PlainSql.Migrations.Tests
 
         protected string GetConnectionString()
         {
-            var connectionStringFromEnvironment = Environment.GetEnvironmentVariable("PLAIN_SQL_MIGRATIONS_MS_SQL");
+            var connectionStringFromEnvironment = Environment.GetEnvironmentVariable("PLAIN_SQL_MIGRATIONS_POSTGRE_SQL");
 
             if (!String.IsNullOrWhiteSpace(connectionStringFromEnvironment))
             {
@@ -32,10 +32,10 @@ namespace PlainSql.Migrations.Tests
 
             if (IsAppVeyor)
             {
-                return @"Server=(local)\SQL2016;Database=tempdb;User ID=sa;Password=Password12!";
+                return @"Server=127.0.0.1;User Id=postgres;Password=Password12!";
             }
 
-            return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
+            return "Server=127.0.0.1;User Id=postgres;Password=postgres";
         }
     }
 }

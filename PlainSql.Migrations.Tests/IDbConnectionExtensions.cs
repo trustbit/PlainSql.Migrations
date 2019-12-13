@@ -17,8 +17,8 @@ namespace PlainSql.Migrations.Tests
             {
                 using (var tx = c.BeginTransaction())
                 {
-                    c.Execute("DROP TABLE IF EXISTS [bla]", transaction: tx);
-                    c.Execute("DROP TABLE IF EXISTS [Migrations]", transaction: tx);
+                    c.Execute("DROP TABLE IF EXISTS bla", transaction: tx);
+                    c.Execute("DROP TABLE IF EXISTS Migrations", transaction: tx);
 
                     tx.Commit();
                 }

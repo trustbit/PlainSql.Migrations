@@ -38,3 +38,4 @@ private void ExecuteMigrations(string connectionString, string environment)
 
 * SQLite
 * MS SQL
+* PostgreSQL

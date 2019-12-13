@@ -83,7 +83,7 @@ GO";
                     tx.Commit();
                 }
 
-                Assert.NotEmpty(c.Query<string>("SELECT Filename FROM [Migrations]"));
+                Assert.NotEmpty(c.Query<string>("SELECT Filename FROM Migrations"));
             });
         }
 
@@ -95,11 +95,11 @@ GO";
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = "CREATE TABLE bla (Id varchar(1) NOT NULL)"
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
-                Assert.Empty(c.Query<object>("SELECT * FROM [bla]"));
+                Assert.Empty(c.Query<object>("SELECT * FROM bla"));
             });
         }
 
@@ -111,14 +111,14 @@ GO";
                 var migration = new MigrationScript
                 {
                     Name = "create bla table",
-                    Script = "CREATE TABLE [bla]([Id] [uniqueidentifier] NOT NULL)"
+                    Script = "CREATE TABLE bla (Id varchar(1) NOT NULL)"
                 };
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
                 Migrator.ExecuteMigrations(c, new[] { migration }, true);
 
                 // Migrations table + bla
-                Assert.Equal(2, c.Query<string>("SELECT Filename FROM [Migrations]").ToList().Count);
+                Assert.Equal(2, c.Query<string>("SELECT Filename FROM Migrations").ToList().Count);
             });
         }
 
