@@ -28,6 +28,13 @@ namespace PlainSql.Migrations.Tests
                 return connectionStringFromEnvironment;
             }
 
+            var IsAppVeyor = Environment.GetEnvironmentVariable("Appveyor")?.ToUpperInvariant() == "TRUE";
+
+            if (IsAppVeyor)
+            {
+                return @"Server=127.0.0.1;User Id=postgres;Password=Password12!";
+            }
+
             return "Server=127.0.0.1;User Id=postgres;Password=postgres";
         }
     }
