@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
-<a name="1.2.0"></a>
+<a name="1.3.0"></a>
+## 1.3.0 (2019-12-16)
+
+### Features
+
+* add PostgreSQL support (#2)
+
 ## 1.2.0 (2019-2-26)
 
 ### Bug Fixes
