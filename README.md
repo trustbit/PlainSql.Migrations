@@ -1,4 +1,4 @@
-# Sql.Migrations
+# PlainSql.Migrations
 
 [![Build status](https://ci.appveyor.com/api/projects/status/m4313sgopt1arwij?svg=true)](https://ci.appveyor.com/project/saintedlama/plainsql-migrations)
 [![Coverage Status](https://coveralls.io/repos/github/Softwarepark/PlainSql.Migrations/badge.svg?branch=master)](https://coveralls.io/github/Softwarepark/PlainSql.Migrations?branch=master)
@@ -9,7 +9,7 @@ Execute migration scripts written in plain old SQL. Only executes each migration
 ## Installation
 
 ```bash
-dotnet  add package Sql.Migrations
+dotnet add package PlainSql.Migrations
 ```
 
 ## Usage
