@@ -22,7 +22,8 @@ namespace PlainSql.Migrations
                     Name = Path.GetFileName(filename),
                     Script = File.ReadAllText(filename)
                 })
-                .ToList();
+                .ToList()
+                .OrderBy(s => s.Name);
         }
     }
 }
