@@ -23,7 +23,7 @@ namespace PlainSql.Migrations
                     Script = File.ReadAllText(filename)
                 })
                 .ToList()
-                .OrderBy(s => s.Name);
+                .OrderBy(s => s.Name, StringComparer.InvariantCulture);
         }
     }
 }
