@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
-<a name="1.3.0"></a>
+<a name="1.3.1"></a>
+## 1.3.1 (2019-12-18)
+
+### Bug Fixes
+
+* sort migration scripts alphabetically (#3)
+
 ## 1.3.0 (2019-12-16)
 
 ### Features
