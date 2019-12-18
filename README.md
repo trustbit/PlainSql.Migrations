@@ -34,6 +34,9 @@ private void ExecuteMigrations(string connectionString, string environment)
 }
 ```
 
+`MigrationScriptsLoader.FromDirectory` orders the migration scripts alphabetically
+(using `System.StringComparer.InvariantCulture`).
+
 ## Database Support
 
 * SQLite
