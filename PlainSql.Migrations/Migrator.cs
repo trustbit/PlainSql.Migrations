@@ -31,7 +31,7 @@ namespace PlainSql.Migrations
 
         public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
         {
-            using (var transaction = connection.BeginTransaction())
+            using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
             {
                 var containsMigrationTable = false;
 
