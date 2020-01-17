@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
-<a name="1.3.1"></a>
+<a name="1.3.2"></a>
+## 1.3.2 (2020-1-17)
+
+### Bug Fixes
+
+* use transaction level serializable (#4)
+
 ## 1.3.1 (2019-12-18)
 
 ### Bug Fixes
