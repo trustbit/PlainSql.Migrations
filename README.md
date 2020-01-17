@@ -42,3 +42,9 @@ private void ExecuteMigrations(string connectionString, string environment)
 * SQLite
 * MS SQL
 * PostgreSQL
+
+## Concurrency
+
+Migrations are executed in a single transaction with isolation level "Serializable". This usually
+means that executing migrations is concurrency-safe. For details on which SQL statements are supported
+by this transaction level, please refer to the documentation of your database technology.
