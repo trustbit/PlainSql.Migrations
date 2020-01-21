@@ -14,14 +14,12 @@ namespace PlainSql.Migrations
     public static class Migrator
     {
         // TODO: Add a script hash to migrations to avoid scripts to be changed without running the migration
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
-            bool createMigrationsTable = true)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, bool createMigrationsTable = true)
         {
             ExecuteMigrations(connection, migrationScripts, options => { });
         }
 
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
-            Action<MigrationOptionsBuilder> configure)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, Action<MigrationOptionsBuilder> configure)
         {
             var builder = new MigrationOptionsBuilder().CreateMigrationsTable(true);
 
@@ -32,8 +30,7 @@ namespace PlainSql.Migrations
             ExecuteMigrations(connection, migrationScripts, options);
         }
 
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
-            MigrationOptions options)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
         {
             var retryCount = 3;
             while (retryCount > 0)
@@ -95,8 +92,7 @@ namespace PlainSql.Migrations
 
                 Log.Information("Executing {MigrationScriptsCount} migration scripts...", migrationScriptsToExecute.Count());
 
-                foreach (var migrationScript in migrationScriptsToExecute.Select(ProcessMigrationScript(connection,
-                    options.ScriptProcessors)))
+                foreach (var migrationScript in migrationScriptsToExecute.Select(ProcessMigrationScript(connection, options.ScriptProcessors)))
                 {
                     ExecuteMigration(connection, transaction, migrationScript);
                 }
@@ -105,8 +101,7 @@ namespace PlainSql.Migrations
             }
         }
 
-        private static Func<MigrationScript, MigrationScript> ProcessMigrationScript(IDbConnection connection,
-            IEnumerable<IMigrationScriptProcessor> processors)
+        private static Func<MigrationScript, MigrationScript> ProcessMigrationScript(IDbConnection connection, IEnumerable<IMigrationScriptProcessor> processors)
         {
             return (migrationScript) =>
             {
@@ -128,8 +123,7 @@ namespace PlainSql.Migrations
         {
             var statements = SplitIntoStatements(migrationScript.Script).ToList();
 
-            Log.Information("Executing {StatementsCount} statements in migration script {MigrationScriptName}...", statements.Count,
-                migrationScript.Name);
+            Log.Information("Executing {StatementsCount} statements in migration script {MigrationScriptName}...", statements.Count, migrationScript.Name);
 
             statements.ForEach(s => connection.Execute(s, transaction: transaction));
 
