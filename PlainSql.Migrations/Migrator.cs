@@ -50,22 +50,7 @@ namespace PlainSql.Migrations
                     Console.WriteLine("Retrying execution of migrationscripts"+e);
                     retryCount--;
                 }
-                catch (DbException e) when (CouldBePostgresDeadlock(e) && retryCount != 0)
-                {
-                    Log.Information(e,"Retrying exection of migrationscripts");
-                    Console.WriteLine("Retrying execution of migrationscripts"+e);
-                    retryCount--;
-                }
             }
-        }
-
-        private static bool CouldBePostgresDeadlock(DbException e)
-        {
-            // var errorCodes = new[] {"42P07", "23505"};
-            var errorCodes = new string[0] ;
-            return string.Equals(e.Source, "npgsql", StringComparison.OrdinalIgnoreCase)
-                   && e.Data.Contains("SqlState")
-                   && errorCodes.Contains(e.Data["SqlState"]?.ToString());
         }
 
         private static void TryExecute(IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
