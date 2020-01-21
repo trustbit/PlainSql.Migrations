@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-
 using Dapper;
 using System.Collections;
+using System.Data.Common;
+using System.Data.SqlClient;
 using Serilog;
 
 namespace PlainSql.Migrations
@@ -13,12 +14,14 @@ namespace PlainSql.Migrations
     public static class Migrator
     {
         // TODO: Add a script hash to migrations to avoid scripts to be changed without running the migration
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, bool createMigrationsTable = true)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
+            bool createMigrationsTable = true)
         {
             ExecuteMigrations(connection, migrationScripts, options => { });
         }
 
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, Action<MigrationOptionsBuilder> configure)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
+            Action<MigrationOptionsBuilder> configure)
         {
             var builder = new MigrationOptionsBuilder().CreateMigrationsTable(true);
 
@@ -29,26 +32,69 @@ namespace PlainSql.Migrations
             ExecuteMigrations(connection, migrationScripts, options);
         }
 
-        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
+        public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts,
+            MigrationOptions options)
         {
-            using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+            var retryCount = 3;
+            while (retryCount > 0)
+            {
+                try
+                {
+                    TryExecute(connection, migrationScripts, options);
+                    return;
+                }
+                // a sql exception that a deadlock
+                catch (SqlException e) when (e.Number == 1205 && retryCount != 0)
+                {
+                    Log.Information(e,"Retrying execution of migrationscripts");
+                    Console.WriteLine("Retrying execution of migrationscripts"+e);
+                    retryCount--;
+                }
+                catch (DbException e) when (CouldBePostgresDeadlock(e) && retryCount != 0)
+                {
+                    Log.Information(e,"Retrying exection of migrationscripts");
+                    Console.WriteLine("Retrying execution of migrationscripts"+e);
+                    retryCount--;
+                }
+            }
+        }
+
+        private static bool CouldBePostgresDeadlock(DbException e)
+        {
+            // var errorCodes = new[] {"42P07", "23505"};
+            var errorCodes = new string[0] ;
+            return string.Equals(e.Source, "npgsql", StringComparison.OrdinalIgnoreCase)
+                   && e.Data.Contains("SqlState")
+                   && errorCodes.Contains(e.Data["SqlState"]?.ToString());
+        }
+
+        private static void TryExecute(IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
+        {
+            using (var transaction = connection.BeginTransaction())
             {
                 var containsMigrationTable = false;
 
+                var selectExecutedMigrations = "SELECT Filename FROM Migrations";
+
                 if (connection.IsSqlite())
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
-                        transaction: transaction) == 1;
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
+                                                 transaction: transaction) == 1;
                 }
                 else if (connection.IsPostgre())
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename='migrations'",
+                    connection.Execute("SELECT pg_advisory_xact_lock(1)", transaction: transaction);
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename='migrations'",
                                                  transaction: transaction) == 1;
                 }
                 else
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations'",
-                       transaction: transaction) == 1;
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables with (SERIALIZABLE) WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations' ",
+                                                 transaction: transaction) == 1;
+                    selectExecutedMigrations = "SELECT Filename FROM Migrations with(SERIALIZABLE)";
                 }
 
                 if (options.CreateMigrationsTable && !containsMigrationTable)
@@ -57,24 +103,32 @@ namespace PlainSql.Migrations
                     CreateMigrationsTable(connection, transaction);
                 }
 
-                var migrationsExecuted = connection.Query<string>("SELECT Filename FROM Migrations", transaction: transaction).ToList();
+                var migrationsExecuted = connection.Query<string>(selectExecutedMigrations, transaction: transaction).ToList();
 
+                Console.Out.WriteLine("Migrations: " + migrationsExecuted.Count);
                 var migrationScriptsToExecute = migrationScripts
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
                 Log.Information("Executing {MigrationScriptsCount} migration scripts...", migrationScriptsToExecute.Count());
 
-                foreach (var migrationScript in migrationScriptsToExecute.Select(ProcessMigrationScript(connection, options.ScriptProcessors)))
+                foreach (var migrationScript in migrationScriptsToExecute.Select(ProcessMigrationScript(connection,
+                    options.ScriptProcessors)))
                 {
                     ExecuteMigration(connection, transaction, migrationScript);
                 }
 
                 transaction.Commit();
+                
+                // if (connection.IsPostgre())
+                // {
+                //     connection.Execute("select pg_advisory_unlock(1)", transaction: transaction);
+                // }
             }
         }
 
-        private static Func<MigrationScript, MigrationScript> ProcessMigrationScript(IDbConnection connection, IEnumerable<IMigrationScriptProcessor> processors)
+        private static Func<MigrationScript, MigrationScript> ProcessMigrationScript(IDbConnection connection,
+            IEnumerable<IMigrationScriptProcessor> processors)
         {
             return (migrationScript) =>
             {
@@ -96,7 +150,8 @@ namespace PlainSql.Migrations
         {
             var statements = SplitIntoStatements(migrationScript.Script).ToList();
 
-            Log.Information("Executing {StatementsCount} statements in migration script {MigrationScriptName}...", statements.Count, migrationScript.Name);
+            Log.Information("Executing {StatementsCount} statements in migration script {MigrationScriptName}...", statements.Count,
+                migrationScript.Name);
 
             statements.ForEach(s => connection.Execute(s, transaction: transaction));
 
