@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Dapper;
 using System.Collections;
-using System.Data.Common;
 using System.Data.SqlClient;
 using Serilog;
 
@@ -40,10 +39,10 @@ namespace PlainSql.Migrations
                     TryExecute(connection, migrationScripts, options);
                     return;
                 }
-                // a sql exception that a deadlock
+                // a sql exception that is a deadlock
                 catch (SqlException e) when (e.Number == 1205 && retryCount != 0)
                 {
-                    Log.Information(e,"{RetryCount} remaining retries for execution of migrations", retryCount);
+                    Log.Information(e,"{RetryCount} remaining retries for the execution of migrations", retryCount);
                     retryCount--;
                 }
             }
@@ -55,7 +54,7 @@ namespace PlainSql.Migrations
             {
                 var containsMigrationTable = false;
 
-                var selectExecutedMigrations = "SELECT Filename FROM Migrations";
+                var selectMigrationsExecuted = "SELECT Filename FROM Migrations";
 
                 if (connection.IsSqlite())
                 {
@@ -75,7 +74,7 @@ namespace PlainSql.Migrations
                     containsMigrationTable = connection.ExecuteScalar<int>(
                                                  "SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables with (SERIALIZABLE) WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations' ",
                                                  transaction: transaction) == 1;
-                    selectExecutedMigrations = "SELECT Filename FROM Migrations with(SERIALIZABLE)";
+                    selectMigrationsExecuted = "SELECT Filename FROM Migrations with(SERIALIZABLE)";
                 }
 
                 if (options.CreateMigrationsTable && !containsMigrationTable)
@@ -84,7 +83,7 @@ namespace PlainSql.Migrations
                     CreateMigrationsTable(connection, transaction);
                 }
 
-                var migrationsExecuted = connection.Query<string>(selectExecutedMigrations, transaction: transaction).ToList();
+                var migrationsExecuted = connection.Query<string>(selectMigrationsExecuted, transaction: transaction).ToList();
 
                 var migrationScriptsToExecute = migrationScripts
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))
