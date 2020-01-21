@@ -122,11 +122,10 @@ GO";
             });
         }
 
-        [Fact]
-        public async Task Can_execute_scripts_in_parallel()
+        public static async Task ExecuteMigrationsInParallel(Func<IDbConnection> connection)
         {
-            Connection.CleanDbConnection();
-            Migrator.CreateMigrationsTable(Connection, null);
+            connection().CleanDbConnection();
+            Migrator.CreateMigrationsTable(connection(), null);
 
             var result =
                 await Task.WhenAll(
@@ -135,7 +134,7 @@ GO";
                     Task.Factory.StartNew(ExecuteMigration));
 
             // Migrations table + bla
-            Assert.Equal(2, Connection.Query<string>("SELECT Filename FROM Migrations").ToList().Count);
+            Assert.Equal(2, connection().Query<string>("SELECT Filename FROM Migrations").ToList().Count);
 
             bool ExecuteMigration()
             {
@@ -144,7 +143,7 @@ GO";
                     Name = "create bla table",
                     Script = "CREATE TABLE bla (Id varchar(1) NOT NULL)"
                 };
-                using (var c = Connection)
+                using (var c = connection())
                     Migrator.ExecuteMigrations(c, new[] {migration}, false);
                 return true;
             }

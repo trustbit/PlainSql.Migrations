@@ -2,7 +2,6 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
 using Npgsql;
 using Xunit;
 
@@ -40,6 +39,12 @@ namespace PlainSql.Migrations.Tests
             }
 
             return "Server=127.0.0.1;User Id=postgres;Password=postgres";
+        }
+
+        [Fact]
+        public Task Can_execute_scripts_in_parallel()
+        {
+            return ExecuteMigrationsInParallel(() => Connection);
         }
     }
 }

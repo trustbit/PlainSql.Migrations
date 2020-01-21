@@ -1,6 +1,8 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace PlainSql.Migrations.Tests
 {
@@ -36,6 +38,12 @@ namespace PlainSql.Migrations.Tests
             }
 
             return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
+        }
+
+        [Fact]
+        public Task Can_execute_scripts_in_parallel()
+        {
+            return ExecuteMigrationsInParallel(() => Connection);
         }
     }
 }
