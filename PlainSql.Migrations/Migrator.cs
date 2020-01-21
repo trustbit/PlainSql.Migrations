@@ -46,8 +46,7 @@ namespace PlainSql.Migrations
                 // a sql exception that a deadlock
                 catch (SqlException e) when (e.Number == 1205 && retryCount != 0)
                 {
-                    Log.Information(e,"Retrying execution of migrationscripts");
-                    Console.WriteLine("Retrying execution of migrationscripts"+e);
+                    Log.Information(e,"{RetryCount} remaining retries for execution of migrations", retryCount);
                     retryCount--;
                 }
             }
@@ -90,7 +89,6 @@ namespace PlainSql.Migrations
 
                 var migrationsExecuted = connection.Query<string>(selectExecutedMigrations, transaction: transaction).ToList();
 
-                Console.Out.WriteLine("Migrations: " + migrationsExecuted.Count);
                 var migrationScriptsToExecute = migrationScripts
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))
                     .ToList();
@@ -104,11 +102,6 @@ namespace PlainSql.Migrations
                 }
 
                 transaction.Commit();
-                
-                // if (connection.IsPostgre())
-                // {
-                //     connection.Execute("select pg_advisory_unlock(1)", transaction: transaction);
-                // }
             }
         }
 
