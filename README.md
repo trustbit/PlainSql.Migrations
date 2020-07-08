@@ -37,6 +37,10 @@ private void ExecuteMigrations(string connectionString, string environment)
 `MigrationScriptsLoader.FromDirectory` orders the migration scripts alphabetically
 (using `System.StringComparer.InvariantCulture`).
 
+## Global Tool
+
+`PlainSql.Migrations` offers a .NET Global tool that can be installed like so `dotnet tool install --global PlainSql.Migrations.Tool` and then executed from the terminal like so `migrate -c "Uid=myuser;Pwd=password1;Host=localhost;Database=northwind;" -d postgres`. 
+
 ## Database Support
 
 * SQLite
