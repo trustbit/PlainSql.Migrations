@@ -55,7 +55,7 @@ namespace PlainSql.Migrations.Tool
                 connection.Open();
                 var migrationScripts = MigrationScriptsLoader.FromDirectory(MigrationScriptFolder);
                 Migrator.ExecuteMigrations(connection, migrationScripts, CreateMigrationsTable);
-
+                connection.Close();
                 Log.Information("Finished executing database migrations!");
             }
             catch (Exception e)
