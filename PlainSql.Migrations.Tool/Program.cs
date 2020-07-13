@@ -61,6 +61,7 @@ namespace PlainSql.Migrations.Tool
             catch (Exception e)
             {
                 Log.Error(e, "There has been a problem executing the migrations:");
+                throw;
             }
         }
     }
