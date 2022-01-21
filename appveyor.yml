@@ -2,6 +2,8 @@ image: Visual Studio 2019
 services:
   - mssql2019
   - postgresql
+init:
+  - net start MSSQL$SQL2019
 branches:
   only:
     - master
