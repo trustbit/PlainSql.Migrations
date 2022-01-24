@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
 <a name="1.3.2"></a>
+## 1.4.0 (2022-1-24)
+
+* Bump .NET versions
+
 ## 1.3.2 (2020-1-17)
 
 ### Bug Fixes
