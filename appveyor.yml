@@ -1,7 +1,9 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 services:
-  - mssql2016
+  - mssql2019
   - postgresql
+init:
+  - net start MSSQL$SQL2019
 branches:
   only:
     - master
@@ -12,5 +14,5 @@ build_script:
   - cmd: dotnet build
 test_script:
   - cmd: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover PlainSql.Migrations.Tests/PlainSql.Migrations.Tests.csproj
-  - ps: csmacnz.Coveralls --opencover -i C:\projects\plainsql-migrations\PlainSql.Migrations.Tests\coverage.opencover.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
+  - ps: csmacnz.Coveralls --opencover -i C:\projects\plainsql-migrations\PlainSql.Migrations.Tests\coverage.net5.0.opencover.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
 deploy: off
