@@ -1,6 +1,6 @@
 # PlainSql.Migrations
 
-[![Build status](https://ci.appveyor.com/api/projects/status/m4313sgopt1arwij?svg=true)](https://ci.appveyor.com/project/saintedlama/plainsql-migrations)
+[![Build status](https://ci.appveyor.com/api/projects/status/tuai6peo17rk4sp1/branch/master?svg=true)](https://ci.appveyor.com/project/Softwarepark/plainsql-migrations/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/Softwarepark/PlainSql.Migrations/badge.svg?branch=master)](https://coveralls.io/github/Softwarepark/PlainSql.Migrations?branch=master)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
