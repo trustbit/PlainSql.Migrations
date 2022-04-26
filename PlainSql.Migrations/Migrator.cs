@@ -103,7 +103,7 @@ namespace PlainSql.Migrations
             connection.Execute("INSERT INTO Migrations (Id, Filename, AppliedOn) VALUES (@id, @filename, @appliedOn)", new
             {
                 Id = Guid.NewGuid(),
-                AppliedOn = DateTimeOffset.Now,
+                AppliedOn = DateTimeOffset.UtcNow,
                 Filename = migrationScript.Name
             }, transaction);
         }
