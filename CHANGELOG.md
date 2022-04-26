@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
-<a name="1.3.2"></a>
+## 2.0.0 (2022-04-26)
+
+* ditched .NET 2.1 support
+* enabled .NET 6.0 support
+* upgraded Npgsql to 6 version
+* Using UTC timestamps instead of zoned/offset
+
 ## 1.4.0 (2022-1-24)
 
 * Bump .NET versions
