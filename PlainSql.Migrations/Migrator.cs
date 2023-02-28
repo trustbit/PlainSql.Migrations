@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-
 using Dapper;
 using System.Collections;
+using System.Data.SqlClient;
 using Serilog;
 
 namespace PlainSql.Migrations
@@ -31,24 +31,50 @@ namespace PlainSql.Migrations
 
         public static void ExecuteMigrations(this IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
         {
-            using (var transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+            var retryCount = 3;
+            while (retryCount > 0)
+            {
+                try
+                {
+                    TryExecute(connection, migrationScripts, options);
+                    return;
+                }
+                // a sql exception that is a deadlock
+                catch (SqlException e) when (e.Number == 1205 && retryCount != 0)
+                {
+                    Log.Information(e,"{RetryCount} remaining retries for the execution of migrations", retryCount);
+                    retryCount--;
+                }
+            }
+        }
+
+        private static void TryExecute(IDbConnection connection, IEnumerable<MigrationScript> migrationScripts, MigrationOptions options)
+        {
+            using (var transaction = connection.BeginTransaction())
             {
                 var containsMigrationTable = false;
 
+                var selectMigrationsExecuted = "SELECT Filename FROM Migrations";
+
                 if (connection.IsSqlite())
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
-                        transaction: transaction) == 1;
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Migrations'",
+                                                 transaction: transaction) == 1;
                 }
                 else if (connection.IsPostgre())
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename='migrations'",
+                    connection.Execute("SELECT pg_advisory_xact_lock(1)", transaction: transaction);
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname='public' AND tablename='migrations'",
                                                  transaction: transaction) == 1;
                 }
                 else
                 {
-                    containsMigrationTable = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations'",
-                       transaction: transaction) == 1;
+                    containsMigrationTable = connection.ExecuteScalar<int>(
+                                                 "SELECT COUNT(*) FROM INFORMATION_SCHEMA.tables with (SERIALIZABLE) WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='Migrations' ",
+                                                 transaction: transaction) == 1;
+                    selectMigrationsExecuted = "SELECT Filename FROM Migrations with(SERIALIZABLE)";
                 }
 
                 if (options.CreateMigrationsTable && !containsMigrationTable)
@@ -57,7 +83,7 @@ namespace PlainSql.Migrations
                     CreateMigrationsTable(connection, transaction);
                 }
 
-                var migrationsExecuted = connection.Query<string>("SELECT Filename FROM Migrations", transaction: transaction).ToList();
+                var migrationsExecuted = connection.Query<string>(selectMigrationsExecuted, transaction: transaction).ToList();
 
                 var migrationScriptsToExecute = migrationScripts
                     .Where(migrationScript => !migrationsExecuted.Contains(migrationScript.Name, StringComparer.OrdinalIgnoreCase))

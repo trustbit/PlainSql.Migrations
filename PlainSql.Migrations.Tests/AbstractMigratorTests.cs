@@ -122,6 +122,33 @@ GO";
             });
         }
 
+        public static async Task ExecuteMigrationsInParallel(Func<IDbConnection> connection)
+        {
+            connection().CleanDbConnection();
+            Migrator.CreateMigrationsTable(connection(), null);
+
+            var result =
+                await Task.WhenAll(
+                    Task.Factory.StartNew(ExecuteMigration),
+                    Task.Factory.StartNew(ExecuteMigration),
+                    Task.Factory.StartNew(ExecuteMigration));
+
+            // Migrations table + bla
+            Assert.Equal(2, connection().Query<string>("SELECT Filename FROM Migrations").ToList().Count);
+
+            bool ExecuteMigration()
+            {
+                var migration = new MigrationScript
+                {
+                    Name = "create bla table",
+                    Script = "CREATE TABLE bla (Id varchar(1) NOT NULL)"
+                };
+                using (var c = connection())
+                    Migrator.ExecuteMigrations(c, new[] {migration}, false);
+                return true;
+            }
+        }
+
         private string RemoveEmptyLines(string x)
         {
             return String.Join("\r\n",
