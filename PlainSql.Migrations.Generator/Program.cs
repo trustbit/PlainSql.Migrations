@@ -67,7 +67,7 @@ class Program
     private string CreateFilename()
     {
         var titleCaseDescription = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Description);
-        var filename = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" +
+        var filename = DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "_" +
                        Regex.Replace(titleCaseDescription, @"\s+", "") + ".sql";
         return filename;
     }
