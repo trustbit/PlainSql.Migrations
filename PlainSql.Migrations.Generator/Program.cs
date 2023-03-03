@@ -44,7 +44,7 @@ class Program
         }
         catch (Exception e)
         {
-            Log.Error("There has been a problem creating the migration file: " + e.Message);
+            Log.Error(e, "There has been a problem creating the migration file: " + e.Message);
         }
     }
 
