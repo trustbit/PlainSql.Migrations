@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainSql.Migrations.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainSql.Migrations.Tool", "PlainSql.Migrations.Tool\PlainSql.Migrations.Tool.csproj", "{BB78F3B9-73E4-42C6-B0AD-F09BE6604A12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlainSql.Migrations.Generator", "PlainSql.Migrations.Generator\PlainSql.Migrations.Generator.csproj", "{6A45F0FE-262C-467E-A47B-2FFEC1E02553}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{BB78F3B9-73E4-42C6-B0AD-F09BE6604A12}.Release|x64.Build.0 = Release|Any CPU
 		{BB78F3B9-73E4-42C6-B0AD-F09BE6604A12}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB78F3B9-73E4-42C6-B0AD-F09BE6604A12}.Release|x86.Build.0 = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|x64.Build.0 = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|x64.ActiveCfg = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|x64.Build.0 = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A45F0FE-262C-467E-A47B-2FFEC1E02553}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

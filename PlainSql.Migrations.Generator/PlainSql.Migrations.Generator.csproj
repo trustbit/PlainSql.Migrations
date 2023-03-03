@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Version>1.0</Version>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackAsTool>true</PackAsTool>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <ToolCommandName>generate-migration</ToolCommandName>
+    <Description>A .NET Global tool that generates timestamped PlainSql.Migration files</Description>
+    <PackageTags>sql;migrations;conventional;commit;git</PackageTags>
+    <Company>Trustbit</Company>
+    <Authors>Felix Auer</Authors>
+    <PackageProjectUrl>https://github.com/trustbit/PlainSql.Migrations</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/trustbit/PlainSql.Migrations</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2"/>
+    <PackageReference Include="Serilog" Version="2.12.0"/>
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlainSql.Migrations\PlainSql.Migrations.csproj"/>
+  </ItemGroup>
+</Project>
