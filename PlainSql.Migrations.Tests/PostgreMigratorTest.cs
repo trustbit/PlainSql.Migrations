@@ -35,7 +35,7 @@ namespace PlainSql.Migrations.Tests
                 return "Server=127.0.0.1;User Id=postgres;Password=Password12!";
             }
 
-            var IsGitHubActions = Environment.GetEnvironmentVariable("CI")?.ToUpperInvariant() == "true";
+            var IsGitHubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE";
 
             if (IsGitHubActions)
             {
