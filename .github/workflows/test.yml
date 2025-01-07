@@ -39,8 +39,8 @@ jobs:
             9.0.x
             6.0.x
       - run: dotnet build
-      - run: dotnet test --no-build -p:TestTfmsInParallel=false -p:CollectCoverage=true -p:CoverletOutputFormat=opencover PlainSql.Migrations.Tests/PlainSql.Migrations.Tests.csproj
+      - run: dotnet test --no-build -p:TestTfmsInParallel=false -p:CollectCoverage=true -p:CoverletOutputFormat=lcov PlainSql.Migrations.Tests/PlainSql.Migrations.Tests.csproj
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          files: PlainSql.Migrations.Tests/coverage.net8.0.opencover.xml PlainSql.Migrations.Tests/coverage.net9.0.opencover.xml
+          files: PlainSql.Migrations.Tests/coverage.net8.0.info PlainSql.Migrations.Tests/coverage.net9.0.info
