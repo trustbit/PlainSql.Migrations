@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. See [versio
 ## 3.0.0 (2025-01-07)
 
 * ditched .NET 3.1, .NET 5.0 support for tool
-* enabled .NET 6.0, .NET 8.0, .NET 9.0 support for tool
+* enabled .NET 8.0, .NET 9.0 support for tool
 * upgraded Npgsql to 9 version
 * Add GitHub actions CI flow
 
