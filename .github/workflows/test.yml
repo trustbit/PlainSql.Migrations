@@ -1,0 +1,25 @@
+name: Test
+
+on: [pull_request]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mssql:
+        image: mssql/server
+        env:
+          MSSQL_SA_PASSWORD: test123!
+
+    steps:
+      - run: dotnet test
