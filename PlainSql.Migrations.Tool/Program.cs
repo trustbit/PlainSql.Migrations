@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Data.Sqlite;
 using Npgsql;
