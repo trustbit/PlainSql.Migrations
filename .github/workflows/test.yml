@@ -16,11 +16,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
       mssql:
         image: mcr.microsoft.com/mssql/server
         env:
           ACCEPT_EULA: Y
           MSSQL_SA_PASSWORD: test123!
+        ports:
+          - 1433:1433
 
     steps:
       - uses: actions/checkout@v4
