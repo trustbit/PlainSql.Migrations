@@ -21,7 +21,7 @@ namespace PlainSql.Migrations.Tool
         public string MigrationScriptFolder { get; set; } = "./MigrationScripts";
 
         [Required]
-        [AllowedValues("mssql", "postgres", "sqllite", IgnoreCase = true)]
+        [McMaster.Extensions.CommandLineUtils.AllowedValuesAttribute("mssql", "postgres", "sqllite", IgnoreCase = true)]
         [Option(Description = "The database type to connect to", ShortName = "d", LongName = "databasetype")]
         public string DatabaseType { get; set; }
 
