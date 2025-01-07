@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/saintedlama/versionize) for commit guidelines.
 
+## 3.0.0 (2025-01-07)
+
+* ditched .NET 3.1, .NET 5.0 support
+* enabled .NET 6.0, .NET 7.0, .NET 8.0, .NET 9.0 support
+* upgraded Npgsql to 9 version
+
 ## 2.0.0 (2022-04-26)
 
 * ditched .NET 2.1 support
