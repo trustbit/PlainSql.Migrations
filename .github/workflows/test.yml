@@ -22,4 +22,8 @@ jobs:
           MSSQL_SA_PASSWORD: test123!
 
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0"      
       - run: dotnet test
