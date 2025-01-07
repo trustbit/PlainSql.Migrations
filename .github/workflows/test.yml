@@ -17,7 +17,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mssql:
-        image: mssql/server
+        image: mcr.microsoft.com/mssql/server
         env:
           MSSQL_SA_PASSWORD: test123!
 
