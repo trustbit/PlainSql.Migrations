@@ -11,7 +11,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Dapper.Contrib" Version="1.50.5" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1" />
     <PackageReference Include="Npgsql" Version="9.0.2" />

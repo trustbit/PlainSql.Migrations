@@ -100,7 +100,7 @@ namespace PlainSql.Migrations
 
             statements.ForEach(s => connection.Execute(s, transaction: transaction));
 
-            connection.Execute("INSERT INTO Migrations (Id, Filename, AppliedOn) VALUES (@id, @filename, @appliedOn)", new
+            connection.Execute("INSERT INTO Migrations (Id, Filename, AppliedOn) VALUES (@Id, @Filename, @AppliedOn)", new
             {
                 Id = Guid.NewGuid(),
                 AppliedOn = DateTimeOffset.UtcNow,
