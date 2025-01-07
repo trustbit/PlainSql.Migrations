@@ -35,6 +35,13 @@ namespace PlainSql.Migrations.Tests
                 return @"Server=(local)\SQL2019;Database=tempdb;User ID=sa;Password=Password12!";
             }
 
+            var IsGitHubActions = Environment.GetEnvironmentVariable("CI")?.ToUpperInvariant() == "true";
+
+            if (IsGitHubActions)
+            {
+                return "Data Source=mssql;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
+            }
+
             return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
         }
     }
