@@ -33,4 +33,5 @@ jobs:
           dotnet-version: |
             9.0.x
             6.0.x
-      - run: dotnet test
+      - run: dotnet build
+      - run: dotnet test --no-build PlainSql.Migrations.Tests/PlainSql.Migrations.Tests.csproj
