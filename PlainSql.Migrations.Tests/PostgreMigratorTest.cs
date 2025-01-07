@@ -39,7 +39,7 @@ namespace PlainSql.Migrations.Tests
 
             if (IsGitHubActions)
             {
-                return "Server=postgres;Password=postgres";
+                return "Server=localhost;Password=postgres";
             }
 
             return "Server=127.0.0.1;User Id=postgres;Password=postgres";

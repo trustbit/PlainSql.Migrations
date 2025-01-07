@@ -39,7 +39,7 @@ namespace PlainSql.Migrations.Tests
 
             if (IsGitHubActions)
             {
-                return "Data Source=mssql;User id=SA;Password=test123!;";
+                return "Data Source=localhost;User id=SA;Password=test123!;";
             }
 
             return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";
