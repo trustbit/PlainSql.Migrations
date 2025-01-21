@@ -38,7 +38,36 @@ private void ExecuteMigrations(string connectionString, string environment)
 
 ## Global Tool
 
-`PlainSql.Migrations` offers a .NET Global tool that can be installed like so `dotnet tool install --global PlainSql.Migrations.Tool` and then executed from the terminal like so `migrate -c "Uid=myuser;Pwd=password1;Host=localhost;Database=northwind;" -d postgres`. 
+`PlainSql.Migrations` offers a .NET Global tool that can be installed like
+so `dotnet tool install --global PlainSql.Migrations.Tool` and then executed from the terminal like
+so `migrate -c "Uid=myuser;Pwd=password1;Host=localhost;Database=northwind;" -d postgres`.
+
+## Creating Migration Files
+
+`PlainSql.Migrations` also includes a .NET Global tool to generate timestamped migration files in the format
+of `yyyyMMddHHmmss_DescriptionOfTheMigration.sql`. 
+
+### Usage
+
+#### Installation
+
+Install with `dotnet tool install --global PlainSql.Migrations.Generator`.
+
+#### Generating Files
+Use the `generate-migration` command.
+
+```
+$ generate-migration "add phone number to user table"
+[10:42:21 INF] Creating migration file 20230302104221_AddPhoneNumberToUserTable.sql in ./MigrationScripts
+[10:42:21 INF] Sucessfully created 20230302104221_AddPhoneNumberToUserTable.sql!
+```
+
+A different location for the migration scripts folder can be supplied with the `-m` option:
+```
+$ generate-migration "add phone number to user table" -m "./migrations"
+[10:44:54 INF] Creating migration file 20230302104454_AddPhoneNumberToUserTable.sql in ./migrations
+[10:44:54 INF] Sucessfully created 20230302104454_AddPhoneNumberToUserTable.sql!
+```
 
 ## Database Support
 
