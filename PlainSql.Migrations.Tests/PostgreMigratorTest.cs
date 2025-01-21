@@ -32,7 +32,14 @@ namespace PlainSql.Migrations.Tests
 
             if (IsAppVeyor)
             {
-                return @"Server=127.0.0.1;User Id=postgres;Password=Password12!";
+                return "Server=127.0.0.1;User Id=postgres;Password=Password12!";
+            }
+
+            var IsGitHubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE";
+
+            if (IsGitHubActions)
+            {
+                return "Server=localhost;User Id=postgres;Password=postgres";
             }
 
             return "Server=127.0.0.1;User Id=postgres;Password=postgres";

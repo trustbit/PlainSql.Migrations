@@ -1,6 +1,6 @@
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace PlainSql.Migrations.Tests
 {
@@ -32,7 +32,14 @@ namespace PlainSql.Migrations.Tests
 
             if (IsAppVeyor)
             {
-                return @"Server=(local)\SQL2019;Database=tempdb;User ID=sa;Password=Password12!";
+                return @"Server=(local)\SQL2019;Database=tempdb;User ID=sa;Password=Password12!;TrustServerCertificate=True;";
+            }
+
+            var IsGitHubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE";
+
+            if (IsGitHubActions)
+            {
+                return "Data Source=localhost;User id=SA;Password=test123!;TrustServerCertificate=True;";
             }
 
             return "Data Source=localhost;Initial Catalog=PlainSqlMigrations;User id=SA;Password=test123!;";

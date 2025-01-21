@@ -1,0 +1,46 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      mssql:
+        image: mcr.microsoft.com/mssql/server
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: test123!
+        ports:
+          - 1433:1433
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+            6.0.x
+      - run: dotnet build
+      - run: dotnet test --no-build -p:TestTfmsInParallel=false -p:CollectCoverage=true -p:CoverletOutputFormat=lcov PlainSql.Migrations.Tests/PlainSql.Migrations.Tests.csproj
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          files: PlainSql.Migrations.Tests/coverage.net8.0.info PlainSql.Migrations.Tests/coverage.net9.0.info
